@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>(주) 아이스푸드앤바인 · Cold-Storage WMS &amp; Dispatch Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         /* Reset box model and prevent accidental mobile tap highlights */
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -25,7 +26,7 @@
 
         /* Apple iOS Liquid Glass Mobile Shell */
         .ios-shell {
-            width: 100%; max-width: 480px; min-height: 100vh;
+            width: 100%; max-width: 1280px; min-height: 100vh;
             margin: 0 auto;
             background:
                 radial-gradient(circle at 12% 6%, rgba(125, 211, 252, 0.34) 0%, transparent 42%),
@@ -35,18 +36,42 @@
             backdrop-filter: blur(26px) saturate(185%);
             -webkit-backdrop-filter: blur(26px) saturate(185%);
             position: relative;
-            padding-bottom: 108px;
+            padding-bottom: 128px;
         }
-        @media (min-width: 640px) {
-            body { padding: 16px; }
+        @media (min-width: 768px) {
+            body { padding: 18px 24px; }
             .ios-shell {
-                min-height: calc(100vh - 32px);
-                border-radius: 44px;
-                border: 1px solid rgba(255, 255, 255, 0.85);
-                box-shadow:
-                    0 0 0 9px rgba(15, 23, 42, 0.92),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-                    0 30px 70px rgba(15, 23, 42, 0.35);
+                min-height: calc(100vh - 36px);
+                border-radius: 28px;
+                border: 1px solid rgba(255, 255, 255, 0.88);
+                box-shadow: 0 22px 54px rgba(15, 23, 42, 0.14);
+                padding-bottom: 48px;
+            }
+            .lg-header {
+                border-radius: 27px 27px 0 0 !important;
+            }
+            .bottom-nav {
+                position: sticky !important;
+                bottom: 14px !important;
+                max-width: 720px !important;
+                margin: 18px auto 0 !important;
+                left: auto !important;
+                transform: none !important;
+            }
+            .tab-panel:not(.hidden) {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 14px;
+                align-items: start;
+            }
+            .tab-panel:not(.hidden) > * {
+                margin-top: 0 !important;
+            }
+            #tab-dispatch > #global-stock-alert,
+            #tab-dispatch > #sec-pending-wrap,
+            #tab-dispatch > #sec-completed-wrap,
+            #tab-dispatch > #sec-cancelled-wrap {
+                grid-column: 1 / -1;
             }
         }
 
@@ -611,6 +636,28 @@
                 <div id="quick-stock-warning" class="hidden mt-2.5 bg-red-950/85 border border-red-400/60 text-red-100 rounded-xl px-3 py-2 text-[11px] font-bold"></div>
             </div>
 
+            <!-- Enterprise Cold-Chain AI & Automation Control Tower -->
+            <div class="lg-card-tint rounded-[24px] p-3.5 border border-sky-300/70">
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <span class="text-[13.5px] font-extrabold text-slate-900 inline-flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/><circle cx="12" cy="12" r="4"/></svg>
+                        <span>AI Control Tower &amp; Otomasi Gudang</span>
+                    </span>
+                    <span id="ai-health-score-pill" class="font-mono text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-950 border border-emerald-400/40 whitespace-nowrap shrink-0">SLA 100 · OPTIMAL</span>
+                </div>
+                <p class="text-[11px] text-slate-600 mb-2.5">
+                    Mesin optimasi cerdas ala WMS enterprise: deteksi risiko stok minus/bottleneck, rekomendasi urutan muat FIFO/kamar, dan auto-balance antrean.
+                </p>
+
+                <div id="ai-insights-feed" class="space-y-1.5 mb-2.5"></div>
+
+                <div class="grid grid-cols-3 gap-1.5">
+                    <button type="button" onclick="WMS.runAutoSequenceQueue()" class="btn-fit h-[36px] px-1.5 rounded-2xl bg-slate-950 text-white text-[10px] font-extrabold shadow-xs">⚡ Urutkan</button>
+                    <button type="button" onclick="WMS.runAutoBalanceRooms()" class="btn-fit h-[36px] px-1.5 rounded-2xl bg-sky-600 text-white text-[10px] font-extrabold shadow-xs">🧊 Alokasi</button>
+                    <button type="button" onclick="WMS.runAutoShiftGuard()" class="btn-fit h-[36px] px-1.5 rounded-2xl bg-amber-500/25 border border-amber-400/60 text-amber-950 text-[10px] font-extrabold">🛡 Cek SLA</button>
+                </div>
+            </div>
+
             <!-- Dispatch Advisor -->
             <div class="lg-card-tint rounded-[24px] p-3.5">
                 <div class="flex items-center justify-between gap-2 mb-1.5">
@@ -674,18 +721,20 @@
                         <button type="button" id="pending-search-clear" onclick="WMS.clearPendingSearch()" class="hidden absolute right-2 w-6 h-6 rounded-xl bg-slate-200/80 text-slate-600 flex items-center justify-center text-xs font-extrabold" aria-label="Hapus pencarian">&times;</button>
                     </div>
 
-                    <div class="flex items-center justify-between gap-1.5 flex-wrap">
-                        <span class="text-[10.5px] font-bold text-slate-500">Urutkan:</span>
-                        <div class="flex items-center gap-1.5 flex-wrap">
-                            <button type="button" id="sort-btn-center" onclick="WMS.togglePendingSort('center')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-white/80 bg-white/70 text-slate-700 text-[11px] font-bold whitespace-nowrap">
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between gap-1.5">
+                            <span class="text-[10.5px] font-bold text-slate-500">Urutkan:</span>
+                            <button type="button" id="sort-btn-reset" onclick="WMS.resetPendingFilterSort()" class="hidden px-2 py-0.5 rounded-xl bg-slate-200/80 text-slate-700 text-[10px] font-bold whitespace-nowrap">Reset</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5">
+                            <button type="button" id="sort-btn-center" onclick="WMS.togglePendingSort('center')" class="btn-fit inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-xl border border-white/80 bg-white/70 text-slate-700 text-[10.5px] font-bold">
                                 <span>1. Jurusan</span>
-                                <span id="sort-dir-center" class="font-mono text-[10px]">A-Z</span>
+                                <span id="sort-dir-center" class="font-mono text-[9.5px]">A-Z</span>
                             </button>
-                            <button type="button" id="sort-btn-time" onclick="WMS.togglePendingSort('time')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-white/80 bg-white/70 text-slate-700 text-[11px] font-bold whitespace-nowrap">
-                                <span>2. Waktu Kedatangan</span>
-                                <span id="sort-dir-time" class="font-mono text-[10px]">Awal</span>
+                            <button type="button" id="sort-btn-time" onclick="WMS.togglePendingSort('time')" class="btn-fit inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-xl border border-white/80 bg-white/70 text-slate-700 text-[10.5px] font-bold">
+                                <span>2. Jam Tiba</span>
+                                <span id="sort-dir-time" class="font-mono text-[9.5px]">Awal</span>
                             </button>
-                            <button type="button" id="sort-btn-reset" onclick="WMS.resetPendingFilterSort()" class="hidden px-2 py-1 rounded-xl bg-slate-200/80 text-slate-700 text-[10.5px] font-bold whitespace-nowrap">Reset</button>
                         </div>
                     </div>
 
@@ -967,13 +1016,13 @@
                     <span id="verify-badge" class="font-mono text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-sky-500/18 border border-white/70 text-sky-800 whitespace-nowrap shrink-0">Draft</span>
                 </div>
                 <p class="text-[11px] text-slate-600 mb-2.5">
-                    Pilih jenis dokumen (<strong>Gabungan</strong>, <strong>출고 / Culgo</strong>, atau <strong>입고 / Ibgo</strong>). Ekspor <strong>PDF / HTML</strong> otomatis dicetak dalam <strong>Bahasa Korea penuh (A4 Landskap)</strong>.
+                    Pilih jenis dokumen (<strong>Gabungan</strong>, <strong>출고</strong>, atau <strong>입고</strong>). Ekspor <strong>PDF / HTML</strong> otomatis dicetak dalam <strong>Bahasa Korea penuh (A4 Landskap)</strong>.
                 </p>
 
                 <div id="report-type-seg" class="grid grid-cols-3 gap-1 bg-slate-900/6 p-1 rounded-2xl mb-3">
                     <button type="button" data-rtype="combined" onclick="WMS.setReportType('combined')" class="seg-btn py-1.5 px-2 rounded-xl text-[11.5px] font-bold bg-white text-slate-900 shadow-xs whitespace-nowrap">Gabungan</button>
-                    <button type="button" data-rtype="culgo" onclick="WMS.setReportType('culgo')" class="seg-btn py-1.5 px-2 rounded-xl text-[11.5px] font-bold text-slate-600 whitespace-nowrap">출고 (Culgo)</button>
-                    <button type="button" data-rtype="ibgo" onclick="WMS.setReportType('ibgo')" class="seg-btn py-1.5 px-2 rounded-xl text-[11.5px] font-bold text-slate-600 whitespace-nowrap">입고 (Ibgo)</button>
+                    <button type="button" data-rtype="culgo" onclick="WMS.setReportType('culgo')" class="seg-btn py-1.5 px-2 rounded-xl text-[11.5px] font-bold text-slate-600 whitespace-nowrap">출고</button>
+                    <button type="button" data-rtype="ibgo" onclick="WMS.setReportType('ibgo')" class="seg-btn py-1.5 px-2 rounded-xl text-[11.5px] font-bold text-slate-600 whitespace-nowrap">입고</button>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 mb-2.5">
@@ -1035,7 +1084,7 @@
                     <span id="archive-count-badge" class="font-mono text-[10.5px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/18 border border-white/70 text-indigo-800 whitespace-nowrap">0 Arsip</span>
                 </div>
                 <p class="text-[11px] text-slate-600 mb-2.5">
-                    Setiap arsip menyimpan laporan <strong>입고 (Ibgo)</strong> &amp; <strong>출고 (Culgo)</strong> yang dapat dibuka kembali kapan saja.
+                    Setiap arsip menyimpan laporan <strong>입고</strong> &amp; <strong>출고</strong> yang dapat dibuka kembali kapan saja.
                 </p>
                 <div id="archive-list" class="space-y-2"></div>
             </div>
@@ -1091,6 +1140,10 @@
                     <button type="button" onclick="WMS.connectGoogleDrive()" class="h-[36px] px-2 rounded-2xl bg-indigo-600 text-white text-[11px] font-bold whitespace-nowrap">Hubungkan</button>
                     <button type="button" onclick="WMS.syncGoogleDriveNow()" class="h-[36px] px-2 rounded-2xl bg-emerald-600 text-white text-[11px] font-bold whitespace-nowrap">Sync Drive</button>
                     <button type="button" onclick="WMS.pullFromGoogleDrive()" class="h-[36px] px-2 rounded-2xl bg-sky-600 text-white text-[11px] font-bold whitespace-nowrap">Tarik Drive</button>
+                </div>
+                <div class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-slate-200/70 text-[10.5px] text-slate-600">
+                    <span id="gdrive-origin-hint" class="truncate font-mono">Origin: https://kawan-e9.github.io</span>
+                    <button type="button" onclick="WMS.clearGeminiApiKey()" class="px-2 py-0.5 rounded-lg bg-slate-200/80 text-slate-700 font-bold text-[10px] whitespace-nowrap shrink-0">Hapus API Key</button>
                 </div>
             </div>
 
@@ -1728,8 +1781,8 @@
             <input type="hidden" id="arch-modal-id">
             <div class="grid grid-cols-3 gap-1 bg-slate-200/80 p-1 rounded-2xl">
                 <button type="button" data-archview="combined" onclick="WMS.switchArchiveView('combined')" class="arch-seg-btn py-1.5 rounded-xl text-[11px] font-bold bg-white text-slate-900 shadow-xs">Gabungan</button>
-                <button type="button" data-archview="culgo" onclick="WMS.switchArchiveView('culgo')" class="arch-seg-btn py-1.5 rounded-xl text-[11px] font-bold text-slate-600">출고 (Culgo)</button>
-                <button type="button" data-archview="ibgo" onclick="WMS.switchArchiveView('ibgo')" class="arch-seg-btn py-1.5 rounded-xl text-[11px] font-bold text-slate-600">입고 (Ibgo)</button>
+                <button type="button" data-archview="culgo" onclick="WMS.switchArchiveView('culgo')" class="arch-seg-btn py-1.5 rounded-xl text-[11px] font-bold text-slate-600">출고</button>
+                <button type="button" data-archview="ibgo" onclick="WMS.switchArchiveView('ibgo')" class="arch-seg-btn py-1.5 rounded-xl text-[11px] font-bold text-slate-600">입고</button>
             </div>
             <pre id="arch-modal-preview" class="bg-slate-950 text-slate-200 font-mono text-[11px] leading-relaxed p-3 rounded-2xl whitespace-pre-wrap max-h-[46vh] overflow-y-auto"></pre>
         </div>
@@ -1782,7 +1835,12 @@
     var ROOM_IDS = ["1", "2", "3", "4", "5", "6"];
     var PALLETS_PER_RIT = 18;
     var BASELINE_DATE = "2026-11-19";
-    var TODAY_OPERATIONAL = "2026-11-20";
+    function getLocalTodayISO(dateObj) {
+        var dt = dateObj || new Date();
+        return dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") + "-" + String(dt.getDate()).padStart(2, "0");
+    }
+    var TODAY_OPERATIONAL = getLocalTodayISO();
+    var DEFAULT_GDRIVE_CLIENT_ID = "146714592912-bh1spbt2hp2shm8qnu040pi6qu9kba34.apps.googleusercontent.com";
     var DAY_KR = ["일", "월", "화", "수", "목", "금", "토"];
     var DAY_ID = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
@@ -2027,15 +2085,21 @@
                     { id: "4", name: "Dock 4", active: true }
                 ]
             },
-            days: {
-                "2026-11-19": day19,
-                "2026-11-20": day20
-            },
+            days: (function () {
+                var dMap = {
+                    "2026-11-19": day19,
+                    "2026-11-20": day20
+                };
+                if (!dMap[TODAY_OPERATIONAL]) {
+                    dMap[TODAY_OPERATIONAL] = createEmptyDay(TODAY_OPERATIONAL, { "1": 0, "2": 0, "3": 453, "4": 392, "5": 0, "6": 0 });
+                }
+                return dMap;
+            })(),
             archives: [],
             aiDriveConfig: {
                 geminiApiKey: "",
                 geminiModel: "gemini-2.5-flash",
-                googleClientId: "",
+                googleClientId: DEFAULT_GDRIVE_CLIENT_ID,
                 googleAccessToken: "",
                 lastDriveSync: ""
             },
@@ -2062,7 +2126,40 @@
             if (!Array.isArray(parsed.archives)) parsed.archives = [];
             parsed.facilityConfig = Object.assign({}, def.facilityConfig, parsed.facilityConfig || {});
             parsed.aiDriveConfig = Object.assign({}, def.aiDriveConfig, parsed.aiDriveConfig || {});
+            if (!parsed.aiDriveConfig.googleClientId) parsed.aiDriveConfig.googleClientId = DEFAULT_GDRIVE_CLIENT_ID;
             parsed.infraConfig = Object.assign({}, def.infraConfig, parsed.infraConfig || {});
+            if (parsed.days) {
+                var allSorted = Object.keys(parsed.days).sort();
+                var prevBeforeToday = allSorted.filter(function (k) { return k < TODAY_OPERATIONAL; });
+                var latestPrevKey = prevBeforeToday.length ? prevBeforeToday[prevBeforeToday.length - 1] : null;
+                var computedOpen = { "1": 0, "2": 0, "3": 453, "4": 392, "5": 0, "6": 0 };
+                if (latestPrevKey && parsed.days[latestPrevKey] && parsed.days[latestPrevKey].rooms) {
+                    var pDay = parsed.days[latestPrevKey];
+                    var pOutMap = { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0 };
+                    (pDay.completed || []).forEach(function (it) {
+                        getItemAllocations(it).forEach(function (al) {
+                            if (ROOM_IDS.indexOf(al.room) !== -1) pOutMap[al.room] += al.pallets;
+                        });
+                    });
+                    ROOM_IDS.forEach(function (r) {
+                        var rm = pDay.rooms[r] || { opening: 0, inbound: 0 };
+                        var adj = (pDay.stockLogs || []).reduce(function (a, lg) { return lg.room === r ? a + (Number(lg.delta) || 0) : a; }, 0);
+                        computedOpen[r] = Math.max(0, (Number(rm.opening) || 0) + (Number(rm.inbound) || 0) - pOutMap[r] + adj);
+                    });
+                }
+                if (!parsed.days[TODAY_OPERATIONAL]) {
+                    parsed.days[TODAY_OPERATIONAL] = createEmptyDay(TODAY_OPERATIONAL, computedOpen);
+                } else {
+                    var tRooms = parsed.days[TODAY_OPERATIONAL].rooms || {};
+                    var sumOpenToday = ROOM_IDS.reduce(function (acc, r) { return acc + (Number(tRooms[r] && tRooms[r].opening) || 0); }, 0);
+                    if (sumOpenToday === 0 && (parsed.days[TODAY_OPERATIONAL].completed || []).length === 0) {
+                        ROOM_IDS.forEach(function (r) {
+                            if (!parsed.days[TODAY_OPERATIONAL].rooms[r]) parsed.days[TODAY_OPERATIONAL].rooms[r] = { opening: 0, inbound: 0 };
+                            parsed.days[TODAY_OPERATIONAL].rooms[r].opening = computedOpen[r];
+                        });
+                    }
+                }
+            }
             return parsed;
         } catch (e) {
             return createBaselineState();
@@ -2097,11 +2194,58 @@
         } catch (e) {}
     }
 
+    function dayHasActivityOrStock(dayObj) {
+        if (!dayObj) return false;
+        if ((dayObj.completed && dayObj.completed.length > 0) || (dayObj.pending && dayObj.pending.length > 0) || (dayObj.stockLogs && dayObj.stockLogs.length > 0)) return true;
+        if (dayObj.rooms) {
+            return ROOM_IDS.some(function (r) {
+                var rm = dayObj.rooms[r];
+                return rm && ((Number(rm.opening) || 0) > 0 || (Number(rm.inbound) || 0) > 0);
+            });
+        }
+        return false;
+    }
+
+    function getCarryoverOpenMapForDate(targetDate) {
+        var keys = Object.keys((state && state.days) || {}).filter(function (k) { return k < targetDate; }).sort().reverse();
+        for (var i = 0; i < keys.length; i++) {
+            var prevKey = keys[i];
+            var prevDay = state.days[prevKey];
+            if (prevDay && prevDay.rooms && dayHasActivityOrStock(prevDay)) {
+                var sumPrev = calcSummary(prevDay);
+                var openMap = {};
+                ROOM_IDS.forEach(function (r) {
+                    openMap[r] = Math.max(0, sumPrev.roomStats[r] ? sumPrev.roomStats[r].closeP : 0);
+                });
+                return openMap;
+            }
+        }
+        return { "1": 0, "2": 0, "3": 453, "4": 392, "5": 0, "6": 0 };
+    }
+
+    function cascadeCarryoverFrom(sourceDate) {
+        var keys = Object.keys((state && state.days) || {}).filter(function (k) { return k > sourceDate; }).sort();
+        keys.forEach(function (nextKey) {
+            var nextDay = state.days[nextKey];
+            if (!nextDay) return;
+            var freshMap = getCarryoverOpenMapForDate(nextKey);
+            if (!freshMap) return;
+            var hasOwnMovement = (nextDay.completed && nextDay.completed.length > 0) || (nextDay.stockLogs && nextDay.stockLogs.length > 0);
+            var sumIn = ROOM_IDS.reduce(function (a, r) { return a + (Number(nextDay.rooms && nextDay.rooms[r] && nextDay.rooms[r].inbound) || 0); }, 0);
+            if (!hasOwnMovement && sumIn === 0) {
+                ROOM_IDS.forEach(function (r) {
+                    if (!nextDay.rooms[r]) nextDay.rooms[r] = { opening: 0, inbound: 0 };
+                    nextDay.rooms[r].opening = freshMap[r];
+                });
+            }
+        });
+    }
+
     function getDay(dateKey) {
         var dk = dateKey || state.date || TODAY_OPERATIONAL;
         if (!state.days || typeof state.days !== "object") state.days = {};
         if (!state.days[dk] || typeof state.days[dk] !== "object") {
-            state.days[dk] = createEmptyDay(dk, null);
+            state.days[dk] = createEmptyDay(dk, getCarryoverOpenMapForDate(dk));
         }
         var d = state.days[dk];
         if (!d.rooms) d.rooms = createEmptyDay(dk, null).rooms;
@@ -2302,11 +2446,8 @@
 
     function changeDate(newDate) {
         if (!newDate || !/^\d{4}-\d{2}-\d{2}$/.test(newDate) || newDate === state.date) return;
-        var prevSummary = calcSummary(getDay(state.date));
         if (!state.days[newDate]) {
-            var carryOpen = {};
-            ROOM_IDS.forEach(function (r) { carryOpen[r] = Math.max(0, prevSummary.roomStats[r].closeP); });
-            state.days[newDate] = createEmptyDay(newDate, carryOpen);
+            state.days[newDate] = createEmptyDay(newDate, getCarryoverOpenMapForDate(newDate));
         }
         state.date = newDate;
         pendingCenterFilter = "";
@@ -2366,7 +2507,7 @@
         var lines = text.split(/\r?\n/).map(function (l) { return l.trim(); }).filter(Boolean);
         var blocks = [];
         var currentBlock = null;
-        var routeHeaderRegex = /^(?:음성)?3공장\s*(?:->|→|-|–|—)\s*(.+)$/;
+        var routeHeaderRegex = /^(?:음성\s*)?3공장\s*(?:->|→|>|-|–|—|~)\s*(.+)$/;
 
         lines.forEach(function (line) {
             if (/배차\s*정보/.test(line) && !routeHeaderRegex.test(line)) {
@@ -2385,7 +2526,7 @@
         });
         if (currentBlock) blocks.push(currentBlock);
 
-        var plateRegex = /[가-힣]{2}\d{2}[가-힣]\d{4}/;
+        var plateRegex = /(?:[가-힣]{2}\d{2}|\d{3})[가-힣]\d{4}/;
         var phoneRegex = /010[-.\s]?\d{3,4}[-.\s]?\d{4}/;
         var items = [];
 
@@ -2453,8 +2594,8 @@
         var v = dObj.verification || {};
         var sh = dObj.shiftSheet || createDefaultShiftSheet();
         var titleTag = m === "culgo"
-            ? "LAPORAN 출고 (CULGO)"
-            : (m === "ibgo" ? "LAPORAN 입고 (IBGO)" : "LAPORAN HARIAN GABUNGAN (입고 + 출고)");
+            ? "LAPORAN 출고"
+            : (m === "ibgo" ? "LAPORAN 입고" : "LAPORAN HARIAN GABUNGAN (입고 + 출고)");
 
         var lines = [
             "[(주) 아이스푸드앤바인 · 출고팀 · 음성3공장]",
@@ -2474,7 +2615,7 @@
                 lines.push("- " + rw.kr + " (" + rw.idLabel + "): 청 " + bVal + " P | 백 " + wVal + " P (Total: " + (bVal + wVal) + " P)");
             });
             lines.push("");
-            lines.push("[RINGKASAN 입고 (PRODUKSI MASUK KAMAR 1–6)]");
+            lines.push("[RINGKASAN 입고 (PRODUKSI MASUK)]");
             lines.push("Stock Awal: " + sum.totalOpening + " P | Masuk (입고): " + sum.totalInbound + " P | Sisa Fisik: " + sum.totalClosing + " P");
             ROOM_IDS.forEach(function (r) {
                 var st = sum.roomStats[r];
@@ -2496,7 +2637,7 @@
             var k3Out = sum.roomStats["3"].outP;
             var k4Out = sum.roomStats["4"].outP;
             var otherOutAll = sum.roomStats["1"].outP + sum.roomStats["2"].outP + sum.roomStats["5"].outP + sum.roomStats["6"].outP + sum.otherOut;
-            lines.push("[RINGKASAN 출고 (DISPATCH KELUAR)]");
+            lines.push("[RINGKASAN 출고 (DISPATCH)]");
             lines.push("Total Keluar (출고): " + sum.totalAllOut + " P (K3: " + k3Out + " P · K4: " + k4Out + " P · " + getOtherLabel() + ": " + otherOutAll + " P)");
             lines.push("Progres Rit: " + dObj.completed.length + " / " + (dObj.completed.length + dObj.pending.length) + " Rit (1 Rit = 18 P)");
             lines.push("", "[REALISASI MUAT SELESAI (출고)]");
@@ -2601,11 +2742,11 @@
         setText("sort-dir-time", pendingSortBy === "time" ? (pendingSortDir === "asc" ? "Awal" : "Akhir") : "Awal");
 
         if (btnC) {
-            btnC.className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border text-[11px] font-bold whitespace-nowrap " +
+            btnC.className = "btn-fit inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-xl border text-[10.5px] font-bold " +
                 (pendingSortBy === "center" ? "border-sky-600 bg-sky-600 text-white shadow-xs" : "border-white/80 bg-white/70 text-slate-700");
         }
         if (btnT) {
-            btnT.className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border text-[11px] font-bold whitespace-nowrap " +
+            btnT.className = "btn-fit inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-xl border text-[10.5px] font-bold " +
                 (pendingSortBy === "time" ? "border-sky-600 bg-sky-600 text-white shadow-xs" : "border-white/80 bg-white/70 text-slate-700");
         }
 
@@ -3490,6 +3631,14 @@
             '</div>';
         }).join(""));
 
+        var origHint = el("gdrive-origin-hint");
+        if (origHint) {
+            var isHttpsWeb = window.location.protocol === "https:" || window.location.protocol === "http:";
+            origHint.textContent = isHttpsWeb
+                ? ("Origin: " + window.location.origin)
+                : ("Lokal (" + window.location.protocol + ") → Buka via GitHub Pages untuk OAuth");
+        }
+
         if (window.WMS && window.WMS.renderSmartAllocation) {
             window.WMS.renderSmartAllocation(sum);
         }
@@ -3497,6 +3646,7 @@
 
     function renderAll() {
         renderHeaderAndWidgets();
+        if (window.WMS && window.WMS.renderEnterpriseAiTower) window.WMS.renderEnterpriseAiTower();
         renderAdvisor();
         renderQuickConsole();
         renderDispatchLists();
@@ -3525,6 +3675,179 @@
 
     window.WMS = {
         switchTab: switchTab,
+        runAutoSequenceQueue: function () {
+            var dObj = getDay(state.date);
+            if (!dObj.pending || dObj.pending.length < 2) {
+                toast("Antrean sudah terurut atau kurang dari 2 rit.");
+                return;
+            }
+            var sum = calcSummary(dObj);
+            dObj.pending.sort(function (a, b) {
+                var aAlloc = getItemAllocations(a);
+                var bAlloc = getItemAllocations(b);
+                var aFeasible = aAlloc.every(function (al) {
+                    return ROOM_IDS.indexOf(al.room) === -1 || al.pallets <= sum.roomStats[al.room].closeP;
+                });
+                var bFeasible = bAlloc.every(function (al) {
+                    return ROOM_IDS.indexOf(al.room) === -1 || al.pallets <= sum.roomStats[al.room].closeP;
+                });
+                if (aFeasible !== bFeasible) return aFeasible ? -1 : 1;
+
+                var aLate = (a.isDelayed || getOverdueMinutes(a.schedTime) > 0) ? 1 : 0;
+                var bLate = (b.isDelayed || getOverdueMinutes(b.schedTime) > 0) ? 1 : 0;
+                if (aLate !== bLate) return bLate - aLate;
+
+                var ta = parseClockMinutes(a.schedTime);
+                var tb = parseClockMinutes(b.schedTime);
+                if (ta === null && tb === null) return 0;
+                if (ta === null) return 1;
+                if (tb === null) return -1;
+                return ta - tb;
+            });
+            saveState();
+            renderAll();
+            toast("Auto-Sequence selesai: prioritas stok siap, rit terlambat, & jam 상차.");
+        },
+
+        runAutoBalanceRooms: function () {
+            var dObj = getDay(state.date);
+            if (!dObj.pending || dObj.pending.length === 0) {
+                toast("Tidak ada antrean rit untuk dialokasikan.");
+                return;
+            }
+            var sum = calcSummary(dObj);
+            var availMap = {};
+            ROOM_IDS.forEach(function (r) { availMap[r] = Math.max(0, sum.roomStats[r].closeP); });
+
+            var balancedCount = 0;
+            var splitCount = 0;
+
+            dObj.pending.forEach(function (it) {
+                var need = getTotalItemPallets(it);
+                var curRoom = (!hasValidSplit(it) && it.room && it.room !== "unset") ? it.room : "";
+                if (curRoom && ROOM_IDS.indexOf(curRoom) !== -1 && availMap[curRoom] >= need) {
+                    availMap[curRoom] -= need;
+                    balancedCount += 1;
+                    return;
+                }
+                var sortedRooms = ROOM_IDS.slice().sort(function (a, b) { return availMap[b] - availMap[a]; });
+                var bestSingle = sortedRooms.find(function (r) { return availMap[r] >= need; });
+                if (bestSingle) {
+                    delete it.roomSplits;
+                    it.room = bestSingle;
+                    it.pallets = need;
+                    availMap[bestSingle] -= need;
+                    balancedCount += 1;
+                } else {
+                    var top1 = sortedRooms[0];
+                    var top2 = sortedRooms[1];
+                    if (top1 && top2 && (availMap[top1] + availMap[top2]) >= need && availMap[top1] > 0) {
+                        var take1 = Math.min(availMap[top1], Math.max(1, need - 1));
+                        var take2 = Math.max(1, need - take1);
+                        if (availMap[top2] >= take2) {
+                            it.room = top1;
+                            it.pallets = take1 + take2;
+                            it.roomSplits = [
+                                { room: top1, pallets: take1 },
+                                { room: top2, pallets: take2 }
+                            ];
+                            availMap[top1] -= take1;
+                            availMap[top2] -= take2;
+                            splitCount += 1;
+                            balancedCount += 1;
+                        }
+                    }
+                }
+            });
+
+            saveState();
+            renderAll();
+            toast("Auto-Alokasi: " + balancedCount + " rit terpetakan (" + splitCount + " rit dipecah 2 kamar).");
+        },
+
+        runAutoShiftGuard: function () {
+            var dObj = getDay(state.date);
+            var sum = calcSummary(dObj);
+            var overdue = 0;
+            dObj.pending.forEach(function (it) {
+                if (getOverdueMinutes(it.schedTime) > 15 && !it.isDelayed) {
+                    overdue += 1;
+                }
+            });
+            var negRooms = ROOM_IDS.filter(function (r) { return sum.roomStats[r].closeP < 0; });
+            var msg = "SLA Audit (" + state.date + "): Sisa fisik " + sum.totalClosing + " P · " +
+                (negRooms.length ? ("Stok minus di K" + negRooms.join(", K") + "! ") : "Semua kamar non-minus. ") +
+                (overdue > 0 ? (overdue + " rit melewati jadwal >15 mnt.") : "Jadwal 상차 terkendali.");
+            showEl("ai-agent-banner", true);
+            setText("ai-agent-banner", msg);
+            toast(msg);
+        },
+
+        renderEnterpriseAiTower: function () {
+            var feedEl = el("ai-insights-feed");
+            var pillEl = el("ai-health-score-pill");
+            if (!feedEl) return;
+
+            var dObj = getDay(state.date);
+            var sum = calcSummary(dObj);
+            var score = 100;
+            var insights = [];
+
+            var negRooms = ROOM_IDS.filter(function (r) { return sum.roomStats[r].closeP < 0; });
+            if (negRooms.length > 0) {
+                score -= negRooms.length * 25;
+                insights.push({
+                    tone: "bg-red-500/15 border-red-300/70 text-red-950",
+                    title: "Anomali Stok Minus (" + negRooms.map(function (r) { return "K" + r + ": " + sum.roomStats[r].closeP + "P"; }).join(", ") + ")",
+                    detail: "Gunakan Koreksi Stok (오적재 이동 / 실사 조정) agar saldo fisik akurat."
+                });
+            }
+
+            var lateCount = dObj.pending.filter(function (it) { return it.isDelayed || getOverdueMinutes(it.schedTime) > 0; }).length;
+            if (lateCount > 0) {
+                score -= Math.min(25, lateCount * 8);
+                insights.push({
+                    tone: "bg-amber-400/20 border-amber-300/80 text-amber-950",
+                    title: lateCount + " Rit Perlu Perhatian Waktu 상차",
+                    detail: "Gunakan Auto-Urutkan atau kirim pesan cepat ke supir untuk sinkronisasi dok."
+                });
+            }
+
+            var needP = dObj.pending.reduce(function (acc, it) { return acc + getTotalItemPallets(it); }, 0);
+            if (needP > sum.totalClosing) {
+                score -= 20;
+                insights.push({
+                    tone: "bg-amber-400/20 border-amber-300/80 text-amber-950",
+                    title: "Kebutuhan Antrean (" + needP + " P) > Sisa Stok (" + sum.totalClosing + " P)",
+                    detail: "Pastikan input 입고 (produksi malam/siang) sudah tercatat di tab Matriks."
+                });
+            }
+
+            if (insights.length === 0) {
+                var bestRoom = ROOM_IDS.slice().sort(function (a, b) { return sum.roomStats[b].closeP - sum.roomStats[a].closeP; })[0];
+                var bestAvail = bestRoom ? sum.roomStats[bestRoom].closeP : 0;
+                insights.push({
+                    tone: "bg-emerald-500/15 border-emerald-300/70 text-emerald-950",
+                    title: "Rekomendasi Prioritas: Kamar " + (bestRoom || "3") + " (" + bestAvail + " P tersedia)",
+                    detail: "Alur muat stabil · 1 Rit = 18 Palet · Auto-carryover stok aktif."
+                });
+            }
+
+            score = Math.max(10, Math.min(100, score));
+            if (pillEl) {
+                pillEl.textContent = "SLA " + score + " · " + (score >= 85 ? "OPTIMAL" : (score >= 60 ? "WASPADA" : "KRITIS"));
+                pillEl.className = "font-mono text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border whitespace-nowrap shrink-0 " +
+                    (score >= 85 ? "bg-emerald-500/20 text-emerald-950 border-emerald-400/40" : (score >= 60 ? "bg-amber-400/25 text-amber-950 border-amber-400/50" : "bg-red-500/20 text-red-950 border-red-400/50"));
+            }
+
+            feedEl.innerHTML = insights.map(function (ins) {
+                return '<div class="rounded-2xl border px-3 py-2 ' + ins.tone + '">' +
+                    '<div class="text-[11.5px] font-extrabold leading-snug">' + esc(ins.title) + '</div>' +
+                    '<div class="text-[10.5px] opacity-85 mt-0.5 leading-snug">' + esc(ins.detail) + '</div>' +
+                '</div>';
+            }).join("");
+        },
+
         changeDate: changeDate,
         shiftDate: shiftDate,
         jumpToOperationalToday: function () { changeDate(TODAY_OPERATIONAL); },
@@ -3764,6 +4087,7 @@
                 var inp = el("modal-stock-awal-" + r);
                 dObj.rooms[r].opening = Math.max(0, Number(inp ? inp.value : 0) || 0);
             });
+            cascadeCarryoverFrom(state.date);
             saveState();
             this.closeModal("stock-awal-modal");
             renderAll();
@@ -4042,8 +4366,20 @@
                 }
             });
 
-            kakaoPreview = { date: targetDate, items: res.items };
-            setText("kakao-preview-info", "Terdeteksi: " + res.items.length + " Rit (" + dupCount + " duplikat disaring)");
+            var uniqueItems = [];
+            var seenSig2 = {};
+            res.items.forEach(function (item) {
+                var sig = [item.schedTime, item.center, item.plate, item.driver].join("|");
+                var alreadyInDay = existingPool.some(function (ex) {
+                    return ex.plate === item.plate && ex.center === item.center && ex.schedTime === item.schedTime;
+                });
+                if (!alreadyInDay && !seenSig2[sig]) {
+                    seenSig2[sig] = true;
+                    uniqueItems.push(item);
+                }
+            });
+            kakaoPreview = { date: targetDate, items: uniqueItems, allItems: res.items };
+            setText("kakao-preview-info", "Terdeteksi: " + uniqueItems.length + " Rit baru (" + dupCount + " duplikat disaring)");
             setText("btn-kakao-replace", "Ganti Semua Antrean (" + res.items.length + " Rit)");
 
             if (res.items.length === 0) {
@@ -4060,11 +4396,12 @@
         },
 
         applyKakaoImport: function (mode) {
-            if (!kakaoPreview.items || kakaoPreview.items.length === 0) { toast("Belum ada baris jadwal valid."); return; }
+            var sourceList = (mode === "replace" && kakaoPreview.allItems && kakaoPreview.allItems.length) ? kakaoPreview.allItems : kakaoPreview.items;
+            if (!sourceList || sourceList.length === 0) { toast("Belum ada baris jadwal valid."); return; }
             var targetDate = kakaoPreview.date || state.date;
             var dObj = getDay(targetDate);
             if (mode === "replace") {
-                dObj.pending = kakaoPreview.items.slice();
+                dObj.pending = sourceList.slice();
             } else {
                 kakaoPreview.items.forEach(function (it) {
                     var exists = dObj.pending.concat(dObj.completed).some(function (ex) {
@@ -4077,23 +4414,233 @@
             toast("Jadwal KakaoTalk (" + kakaoPreview.items.length + " Rit) diterapkan ke " + targetDate + ".");
         },
 
-        parseKakaoWithGemini: function () { this.previewKakao(); toast("Parser jadwal blok rute dijalankan."); },
+        parseKakaoWithGemini: function () {
+            var self = this;
+            var raw = (el("kakao-raw-text") && el("kakao-raw-text").value || "").trim();
+            if (!raw) { toast("Tempel teks jadwal KakaoTalk terlebih dahulu."); return; }
+            if (!state.aiDriveConfig.geminiApiKey || typeof fetch !== "function") {
+                this.previewKakao();
+                toast("Parser blok rute lokal dijalankan.");
+                return;
+            }
+            var modelName = state.aiDriveConfig.geminiModel || "gemini-2.5-flash";
+            var fallbackDate = (el("kakao-target-date") && el("kakao-target-date").value) || state.date;
+            toast("Memproses jadwal via Gemini AI (" + modelName + ")...");
+            var prompt = "Ekstrak jadwal dispatch KakaoTalk berikut menjadi JSON object murni tanpa markdown: {\"date\":\"YYYY-MM-DD\",\"items\":[{\"schedTime\":\"HH:MM atau Rutin\",\"center\":\"nama tujuan\",\"plate\":\"plat nomor\",\"driver\":\"nama supir\",\"phone\":\"010-...\"}]}. Gunakan tanggal " + fallbackDate + " jika tidak disebut. Teks:\n" + raw;
+            var reqBody = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { maxOutputTokens: 2048 }
+            };
+            if (modelName.indexOf("2.5") !== -1) reqBody.generationConfig.thinkingConfig = { thinkingBudget: 128 };
+            fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(modelName) + ":generateContent?key=" + encodeURIComponent(state.aiDriveConfig.geminiApiKey), {
+                method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(reqBody)
+            }).then(function (r) { return r.json(); }).then(function (data) {
+                var parts = (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+                var txt = parts.filter(function (p) { return p && p.text && !p.thought; }).map(function (p) { return p.text; }).join("\n").replace(/```json|```/g, "").trim();
+                var parsed = JSON.parse(txt);
+                if (parsed && Array.isArray(parsed.items) && parsed.items.length > 0) {
+                    var tDate = parsed.date || fallbackDate;
+                    if (el("kakao-target-date")) el("kakao-target-date").value = tDate;
+                    var mapped = parsed.items.map(function (it, idx) {
+                        return {
+                            id: "p-ai-" + idx + "-" + Date.now(),
+                            schedTime: it.schedTime || "Rutin",
+                            actualTime: "",
+                            center: it.center || "센터미정",
+                            plate: it.plate || "차량미정",
+                            driver: it.driver || "-",
+                            phone: it.phone || "",
+                            room: "unset",
+                            pallets: PALLETS_PER_RIT,
+                            grade: "백색 (Putih)",
+                            rit: "Rit " + (idx + 1),
+                            note: "Gemini AI"
+                        };
+                    });
+                    kakaoPreview = { date: tDate, items: mapped, allItems: mapped };
+                    setText("kakao-preview-info", "Terdeteksi AI: " + mapped.length + " Rit");
+                    setText("btn-kakao-replace", "Ganti Semua Antrean (" + mapped.length + " Rit)");
+                    setHTML("kakao-precheck-box", mapped.slice(0, 6).map(function (it, i) {
+                        return "<div class='truncate'>" + (i + 1) + ". <strong class='font-mono'>" + esc(it.schedTime) + "</strong> · " + esc(it.center) + " · <span class='font-mono'>" + esc(it.plate) + "</span> (" + esc(it.driver) + ")</div>";
+                    }).join(""));
+                    toast("Parsing Gemini AI berhasil (" + mapped.length + " Rit).");
+                } else {
+                    self.previewKakao();
+                }
+            }).catch(function () {
+                self.previewKakao();
+                toast("Fallback ke parser lokal otomatis.");
+            });
+        },
 
-        connectGoogleDrive: function () {
+        _initGisTokenClient: function (onTokenReady) {
             var cliInp = el("cfg-gdrive-client");
-            state.aiDriveConfig.googleClientId = ((cliInp ? cliInp.value : "") || state.aiDriveConfig.googleClientId || "").trim();
+            var cid = ((cliInp ? cliInp.value : "") || state.aiDriveConfig.googleClientId || DEFAULT_GDRIVE_CLIENT_ID).trim();
+            state.aiDriveConfig.googleClientId = cid;
             saveState();
-            if (!state.aiDriveConfig.googleClientId) { toast("Masukkan Google OAuth Web Client ID terlebih dahulu."); return; }
-            toast("Konfigurasi Google Drive disimpan.");
+
+            if (window.location.protocol === "content:" || window.location.protocol === "file:") {
+                toast("Buka via https://kawan-e9.github.io/cold.wms/ agar login Google Drive aktif.");
+                return null;
+            }
+            if (!window.google || !window.google.accounts || !window.google.accounts.oauth2) {
+                toast("Google Identity Services belum siap, tunggu 2 detik lalu coba lagi.");
+                return null;
+            }
+            return window.google.accounts.oauth2.initTokenClient({
+                client_id: cid,
+                scope: "https://www.googleapis.com/auth/drive.file",
+                callback: function (resp) {
+                    if (resp && resp.access_token) {
+                        state.aiDriveConfig.googleAccessToken = resp.access_token;
+                        saveState();
+                        renderMasterTab();
+                        toast("Google Drive terhubung!");
+                        if (typeof onTokenReady === "function") onTokenReady(resp.access_token);
+                    } else {
+                        toast("Otorisasi Google Drive dibatalkan atau gagal.");
+                    }
+                }
+            });
+        },
+
+        connectGoogleDrive: function (onReadyCallback) {
+            var tc = this._initGisTokenClient(onReadyCallback);
+            if (!tc) return;
+            tc.requestAccessToken({ prompt: state.aiDriveConfig.googleAccessToken ? "" : "consent" });
         },
 
         syncGoogleDriveNow: function () {
+            var self = this;
             var dObj = getDay(state.date);
-            downloadFile("IceFoodAndVine_DrivePack_" + state.date + ".json", JSON.stringify({ company: "(주) 아이스푸드앤바인", date: state.date, snapshot: dObj }, null, 2), "application/json");
-            toast("Paket JSON Drive (출고 & 입고) disiapkan.");
+            var fileName = "IceFoodAndVine_DrivePack_" + state.date + ".json";
+            var payloadStr = JSON.stringify({ company: "(주) 아이스푸드앤바인", exportedAt: new Date().toISOString(), date: state.date, snapshot: dObj, state: state }, null, 2);
+
+            if (!state.aiDriveConfig.googleAccessToken) {
+                if (window.location.protocol === "content:" || window.location.protocol === "file:") {
+                    downloadFile(fileName, payloadStr, "application/json");
+                    toast("Mode file lokal: Paket JSON diunduh. Buka via GitHub Pages untuk Sync Drive.");
+                    return;
+                }
+                this.connectGoogleDrive(function () { self.syncGoogleDriveNow(); });
+                return;
+            }
+
+            var token = state.aiDriveConfig.googleAccessToken;
+            toast("Mengunggah ke Google Drive...");
+            var q = encodeURIComponent("name = '" + fileName + "' and trashed = false");
+            fetch("https://www.googleapis.com/drive/v3/files?q=" + q + "&fields=files(id,name)", {
+                headers: { Authorization: "Bearer " + token }
+            }).then(function (r) {
+                if (r.status === 401) {
+                    state.aiDriveConfig.googleAccessToken = "";
+                    saveState();
+                    throw new Error("TOKEN_EXPIRED");
+                }
+                return r.json();
+            }).then(function (searchData) {
+                var existingId = (searchData.files && searchData.files.length > 0) ? searchData.files[0].id : null;
+                var metadata = { name: fileName, mimeType: "application/json" };
+                var form = new FormData();
+                form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
+                form.append("file", new Blob([payloadStr], { type: "application/json" }));
+
+                var uploadUrl = existingId
+                    ? "https://www.googleapis.com/upload/drive/v3/files/" + existingId + "?uploadType=multipart"
+                    : "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
+                return fetch(uploadUrl, {
+                    method: existingId ? "PATCH" : "POST",
+                    headers: { Authorization: "Bearer " + token },
+                    body: form
+                });
+            }).then(function (upRes) {
+                if (!upRes.ok) throw new Error("HTTP " + upRes.status);
+                state.aiDriveConfig.lastDriveSync = new Date().toISOString();
+                saveState();
+                toast("Sync Google Drive berhasil (" + fileName + ")!");
+            }).catch(function (err) {
+                if (err && err.message === "TOKEN_EXPIRED") {
+                    self.connectGoogleDrive(function () { self.syncGoogleDriveNow(); });
+                } else {
+                    downloadFile(fileName, payloadStr, "application/json");
+                    toast("Fallback: Paket JSON lokal diunduh (" + (err.message || "offline") + ").");
+                }
+            });
         },
 
-        pullFromGoogleDrive: function () { toast("Gunakan Restore JSON untuk memuat cadangan file lokal."); },
+        pullFromGoogleDrive: function () {
+            var self = this;
+            if (!state.aiDriveConfig.googleAccessToken) {
+                if (window.location.protocol === "content:" || window.location.protocol === "file:") {
+                    toast("Buka via https://kawan-e9.github.io/cold.wms/ untuk Tarik Drive.");
+                    return;
+                }
+                this.connectGoogleDrive(function () { self.pullFromGoogleDrive(); });
+                return;
+            }
+
+            var token = state.aiDriveConfig.googleAccessToken;
+            toast("Mencari cadangan terbaru di Google Drive...");
+            var exactName = "IceFoodAndVine_DrivePack_" + state.date + ".json";
+            var qExact = encodeURIComponent("name = '" + exactName + "' and trashed = false");
+            var qAny = encodeURIComponent("name contains 'IceFoodAndVine_DrivePack_' and trashed = false");
+            fetch("https://www.googleapis.com/drive/v3/files?q=" + qExact + "&pageSize=1&fields=files(id,name,modifiedTime)", {
+                headers: { Authorization: "Bearer " + token }
+            }).then(function (r) {
+                if (r.status === 401) {
+                    state.aiDriveConfig.googleAccessToken = "";
+                    saveState();
+                    throw new Error("TOKEN_EXPIRED");
+                }
+                return r.json();
+            }).then(function (exactData) {
+                if (exactData && exactData.files && exactData.files.length > 0) return exactData;
+                return fetch("https://www.googleapis.com/drive/v3/files?q=" + qAny + "&orderBy=modifiedTime desc&pageSize=1&fields=files(id,name,modifiedTime)", {
+                    headers: { Authorization: "Bearer " + token }
+                }).then(function (r2) {
+                if (r2.status === 401) {
+                    state.aiDriveConfig.googleAccessToken = "";
+                    saveState();
+                    throw new Error("TOKEN_EXPIRED");
+                }
+                return r2.json();
+                });
+            }).then(function (data) {
+                if (!data.files || data.files.length === 0) {
+                    toast("Belum ada file IceFoodAndVine_DrivePack di Google Drive.");
+                    return null;
+                }
+                var latest = data.files[0];
+                return fetch("https://www.googleapis.com/drive/v3/files/" + latest.id + "?alt=media", {
+                    headers: { Authorization: "Bearer " + token }
+                }).then(function (fr) { return fr.json(); }).then(function (parsed) {
+                    return { file: latest, data: parsed };
+                });
+            }).then(function (resObj) {
+                if (!resObj || !resObj.data) return;
+                var currentKey = state.aiDriveConfig && state.aiDriveConfig.geminiApiKey;
+                var currentTok = state.aiDriveConfig && state.aiDriveConfig.googleAccessToken;
+                var currentCid = state.aiDriveConfig && state.aiDriveConfig.googleClientId;
+                if (resObj.data.state && resObj.data.state.days) {
+                    state = resObj.data.state;
+                } else if (resObj.data.snapshot && resObj.data.date) {
+                    state.date = resObj.data.date;
+                    state.days[resObj.data.date] = resObj.data.snapshot;
+                }
+                if (currentKey) state.aiDriveConfig.geminiApiKey = currentKey;
+                if (currentTok) state.aiDriveConfig.googleAccessToken = currentTok;
+                if (currentCid) state.aiDriveConfig.googleClientId = currentCid;
+                saveState();
+                renderAll();
+                toast("Berhasil tarik data dari " + resObj.file.name + "!");
+            }).catch(function (err) {
+                if (err && err.message === "TOKEN_EXPIRED") {
+                    self.connectGoogleDrive(function () { self.pullFromGoogleDrive(); });
+                } else {
+                    toast("Tarik Drive gagal: " + (err.message || "error"));
+                }
+            });
+        },
 
         selectQuickTruck: function (id) {
             quickPendingId = id;
@@ -4992,6 +5539,14 @@
             };
             reader.readAsText(inputEl.files[0]);
             inputEl.value = "";
+        },
+
+        clearGeminiApiKey: function () {
+            state.aiDriveConfig.geminiApiKey = "";
+            if (el("cfg-gemini-key")) el("cfg-gemini-key").value = "";
+            saveState();
+            renderAll();
+            toast("Gemini API Key dihapus dari penyimpanan browser.");
         }
     };
 
