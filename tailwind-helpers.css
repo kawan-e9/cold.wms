@@ -1,0 +1,15 @@
+/* Cold-Storage WMS Companion Utility Stylesheet */
+:root {
+  --wms-bg-dark: #0f172a;
+  --wms-accent-sky: #0284c7;
+  --wms-accent-cyan: #06b6d4;
+}
+.wms-badge-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.wms-glass-surface {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(18px) saturate(175%);
+  -webkit-backdrop-filter: blur(18px) saturate(175%);
+}
