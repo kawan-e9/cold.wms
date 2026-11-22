@@ -1,16 +1,46 @@
+const CACHE_NAME = 'cold-wms-v17-2';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './sw.js',
+  './icon-192.png',
+  './icon-512.png'
+];
+
 self.addEventListener('install', function (event) {
-    self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function (cache) {
+      return cache.addAll(ASSETS).catch(function () {});
+    }).then(function () {
+      return self.skipWaiting();
+    })
+  );
 });
 
 self.addEventListener('activate', function (event) {
-    event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then(function (keys) {
+      return Promise.all(
+        keys.filter(function (k) { return k !== CACHE_NAME; }).map(function (k) { return caches.delete(k); })
+      );
+    }).then(function () {
+      return self.clients.claim();
+    })
+  );
 });
 
 self.addEventListener('fetch', function (event) {
-    if (event.request.method !== 'GET') return;
-    event.respondWith(
-        fetch(event.request).catch(function () {
-            return caches.match(event.request);
-        })
-    );
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    fetch(event.request).then(function (response) {
+      var copy = response.clone();
+      caches.open(CACHE_NAME).then(function (cache) {
+        cache.put(event.request, copy).catch(function () {});
+      });
+      return response;
+    }).catch(function () {
+      return caches.match(event.request);
+    })
+  );
 });
