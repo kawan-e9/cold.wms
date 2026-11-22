@@ -2,9 +2,14 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Cold WMS">
+    <link rel="manifest" href="manifest.json" id="pwa-manifest-link">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%230284c7'/%3E%3Cpath d='M118 134V58a12 12 0 0 0-12-12H40a12 12 0 0 0-12 12v68a8 8 0 0 0 8 8h12M124 134H72M150 134h14a8 8 0 0 0 8-8V96.8a8 8 0 0 0-1.76-4.99l-27.84-34.8A8 8 0 0 0 136.16 54H118' fill='none' stroke='%23fff' stroke-width='11' stroke-linecap='round'/%3E%3Ccircle cx='138' cy='134' r='14' fill='none' stroke='%23fff' stroke-width='11'/%3E%3Ccircle cx='58' cy='134' r='14' fill='none' stroke='%23fff' stroke-width='11'/%3E%3C/svg%3E">
     <title>(주) 아이스푸드앤바인 · Cold-Storage WMS &amp; Dispatch Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -113,6 +118,7 @@
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 6px 20px rgba(15, 23, 42, 0.05);
         }
         .lg-pill-btn {
+            border-radius: 9999px;
             background: rgba(255, 255, 255, 0.68);
             backdrop-filter: blur(14px) saturate(160%);
             -webkit-backdrop-filter: blur(14px) saturate(160%);
@@ -340,6 +346,47 @@
             min-width: 0; max-width: 100%; font-size: 10.5px; line-height: 1.25; padding: 7px 9px; word-break: keep-all;
             display: inline-flex; align-items: center; justify-content: space-between; gap: 6px; text-align: left; border-radius: 12px;
         }
+    
+        input[type="date"].lg-pill-btn {
+            border-radius: 9999px !important;
+            -webkit-border-radius: 9999px !important;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        header .grid.grid-cols-3 > button {
+            border-radius: 9999px !important;
+        }
+
+        /* Full-Screen Fix for Mobile, Standalone PWA & Fullscreen Mode */
+        html, body {
+            width: 100%;
+            min-height: 100dvh;
+            margin: 0;
+            padding: 0;
+        }
+        .ios-shell {
+            width: 100%;
+            max-width: 100%;
+            min-height: 100dvh;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+        }
+        @media (display-mode: fullscreen), (display-mode: standalone) {
+            body { padding: 0 !important; }
+            .ios-shell {
+                max-width: 100% !important;
+                min-height: 100dvh !important;
+                border-radius: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding-top: env(safe-area-inset-top, 0px) !important;
+                padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+            .lg-header { border-radius: 0 !important; }
+        }
+        @media (min-width: 768px) {
+            .ios-shell { max-width: 1280px; }
+        }
     </style>
 </head>
 <body>
@@ -349,20 +396,19 @@
     <!-- =====================================================================
          DYNAMIC ISLAND & LIQUID GLASS HEADER
          ===================================================================== -->
-    <header class="lg-header sticky top-0 z-40 px-3.5 pt-2.5 pb-3 sm:rounded-t-[43px]">
-        <div class="flex justify-center mb-2.5">
-            <button type="button" onclick="WMS.switchTab('dispatch')" class="bg-slate-950/90 backdrop-blur-xl text-white rounded-full px-3.5 py-1.5 inline-flex items-center gap-2 shadow-lg shadow-slate-950/25 border border-white/20">
+    <header class="lg-header sticky top-0 z-40 px-3.5 pt-2.5 pb-3 sm:rounded-t-[28px]">
+        <div class="flex justify-center mb-2">
+            <button type="button" onclick="WMS.switchTab('dispatch')" class="bg-white/40 backdrop-blur-2xl text-slate-900 rounded-full px-3.5 py-1.5 inline-flex items-center gap-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_4px_14px_rgba(15,23,42,0.06)] border border-white/75">
                 <span id="di-dot" class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24]"></span>
                 <span id="di-status-text" class="text-[11px] font-bold tracking-tight whitespace-nowrap">Antrean: 0 Rit · Stok: 845 P</span>
-                <span id="di-rit-pill" class="font-mono text-[10.5px] font-extrabold bg-sky-400/25 text-sky-200 border border-sky-300/25 px-2 py-0.5 rounded-full whitespace-nowrap">Rit 0/0</span>
+                <span id="di-rit-pill" class="font-mono text-[10.5px] font-extrabold bg-sky-500/15 text-sky-950 border border-sky-200/80 px-2.5 py-0.5 rounded-full whitespace-nowrap">Rit 0/0</span>
             </button>
         </div>
 
-        <div class="flex items-center justify-between gap-2.5 mb-2.5">
-            <div class="flex items-center gap-2.5 min-w-0">
-                <!-- Company Truck Logo: resets to active/today Dispatch and scrolls smoothly to top -->
-                <button type="button" onclick="WMS.goHomeToday()" title="Kembali ke Dispatch &amp; Hari Ini" aria-label="Kembali ke Dispatch dan Hari Ini" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-400 via-sky-600 to-slate-950 text-white flex items-center justify-center shadow-md shadow-sky-600/30 border border-white/50 shrink-0 cursor-pointer hover:brightness-105">
-                    <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <div class="flex items-center justify-between gap-2 mb-2">
+            <div class="flex items-center gap-2 min-w-0">
+                <button type="button" onclick="WMS.goHomeToday()" title="Kembali ke Dispatch &amp; Hari Ini" aria-label="Kembali ke Dispatch dan Hari Ini" class="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-400 via-sky-600 to-slate-950 text-white flex items-center justify-center shadow-md shadow-sky-600/30 border border-white/50 shrink-0 cursor-pointer hover:brightness-105">
+                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
                         <path d="M15 18H9"/>
                         <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
@@ -373,25 +419,30 @@
                     </svg>
                 </button>
                 <div class="min-w-0">
-                    <h1 class="text-[15px] font-extrabold tracking-tight text-slate-900 truncate">(주) 아이스푸드앤바인</h1>
-                    <p class="text-[11px] font-bold text-slate-600 truncate">출고팀 · 음성3공장</p>
+                    <h1 class="text-[14.5px] font-extrabold tracking-tight text-slate-900 truncate leading-tight">(주) 아이스푸드앤바인</h1>
+                    <p class="text-[10.5px] font-bold text-slate-600 truncate leading-tight mt-0.5">출고팀 · 음성3공장</p>
                 </div>
             </div>
-            <span class="inline-flex items-center gap-1 bg-white/75 backdrop-blur-md text-sky-800 border border-white/90 shadow-2xs text-[10px] font-extrabold px-2.5 py-1 rounded-full shrink-0 whitespace-nowrap">
-                <svg class="w-3 h-3 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/><path d="m20 16-4-4 4-4"/><path d="m4 8 4 4-4 4"/><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/></svg>
-                COLD WMS
-            </span>
+            <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" id="btn-pwa-install" onclick="WMS.installPwaApp()" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-300/60 shadow-xs text-[10px] font-extrabold px-2.5 py-1 rounded-full whitespace-nowrap cursor-pointer">
+                    <svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span id="pwa-install-label">Install App</span>
+                </button>
+                <button type="button" id="btn-toggle-fullscreen" onclick="WMS.toggleFullscreenMode()" title="Mode Layar Penuh" class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-900/90 text-white border border-white/30 shadow-xs shrink-0 cursor-pointer" aria-label="Layar Penuh">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+                </button>
+            </div>
         </div>
 
         <div class="flex items-center gap-1.5 mb-2">
-            <button type="button" onclick="WMS.shiftDate(-1)" aria-label="Hari Sebelumnya" class="lg-pill-btn w-8 h-8 rounded-xl flex items-center justify-center text-slate-700 shrink-0">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <button type="button" onclick="WMS.shiftDate(-1)" aria-label="Hari Sebelumnya" class="lg-pill-btn w-9 h-9 rounded-full flex items-center justify-center text-slate-700 shrink-0">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
-            <input type="date" id="active-date-input" value="2026-11-20" onchange="WMS.changeDate(this.value)" class="lg-pill-btn flex-1 h-8 rounded-xl px-2.5 font-mono text-xs font-extrabold text-center text-slate-900">
-            <button type="button" onclick="WMS.shiftDate(1)" aria-label="Hari Berikutnya" class="lg-pill-btn w-8 h-8 rounded-xl flex items-center justify-center text-slate-700 shrink-0">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <input type="date" id="active-date-input" value="2026-11-22" onchange="WMS.changeDate(this.value)" class="lg-pill-btn flex-1 min-w-0 h-9 rounded-full px-3.5 font-mono text-xs font-extrabold text-center text-slate-900">
+            <button type="button" onclick="WMS.shiftDate(1)" aria-label="Hari Berikutnya" class="lg-pill-btn w-9 h-9 rounded-full flex items-center justify-center text-slate-700 shrink-0">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
-            <span id="day-name-pill" class="bg-slate-950/90 backdrop-blur-md text-white border border-white/20 text-[11px] font-bold px-2.5 h-8 inline-flex items-center rounded-xl shrink-0 whitespace-nowrap shadow-xs">금 · Jumat</span>
+            <span id="day-name-pill" style="background-color:#0f172a;color:#ffffff;" class="bg-slate-900 text-white border border-slate-700 text-[11px] font-extrabold px-3 h-9 inline-flex items-center rounded-full shrink-0 whitespace-nowrap shadow-sm">일 · Minggu</span>
         </div>
 
         <div id="date-guard-banner" class="hidden mb-2 rounded-xl bg-amber-400/25 backdrop-blur-md border border-amber-300/70 px-2.5 py-1.5 flex items-center justify-between gap-2 text-[10.5px] font-bold text-amber-950">
@@ -1142,9 +1193,13 @@
                     <button type="button" onclick="WMS.pullFromGoogleDrive()" class="h-[36px] px-2 rounded-2xl bg-sky-600 text-white text-[11px] font-bold whitespace-nowrap">Tarik Drive</button>
                 </div>
                 <div class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-slate-200/70 text-[10.5px] text-slate-600">
-                    <span id="gdrive-origin-hint" class="truncate font-mono">Origin: https://kawan-e9.github.io</span>
+                    <label class="inline-flex items-center gap-1.5 font-bold text-slate-700 cursor-pointer">
+                        <input type="checkbox" id="cfg-ephemeral-session" onchange="WMS.toggleSessionOnlyCreds(this.checked)" class="rounded">
+                        <span>Sesi saja (tanpa simpan token/key di storage)</span>
+                    </label>
                     <button type="button" onclick="WMS.clearGeminiApiKey()" class="px-2 py-0.5 rounded-lg bg-slate-200/80 text-slate-700 font-bold text-[10px] whitespace-nowrap shrink-0">Hapus API Key</button>
                 </div>
+                <div class="mt-1 text-[10px] text-slate-500 truncate font-mono" id="gdrive-origin-hint">Origin: https://kawan-e9.github.io</div>
             </div>
 
             <div class="lg-card rounded-[24px] p-3.5">
@@ -1840,6 +1895,9 @@
         return dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") + "-" + String(dt.getDate()).padStart(2, "0");
     }
     var TODAY_OPERATIONAL = getLocalTodayISO();
+    function getOperationalToday() {
+        return getLocalTodayISO();
+    }
     var DEFAULT_GDRIVE_CLIENT_ID = "146714592912-bh1spbt2hp2shm8qnu040pi6qu9kba34.apps.googleusercontent.com";
     var DAY_KR = ["일", "월", "화", "수", "목", "금", "토"];
     var DAY_ID = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -2147,15 +2205,19 @@
                         computedOpen[r] = Math.max(0, (Number(rm.opening) || 0) + (Number(rm.inbound) || 0) - pOutMap[r] + adj);
                     });
                 }
-                if (!parsed.days[TODAY_OPERATIONAL]) {
-                    parsed.days[TODAY_OPERATIONAL] = createEmptyDay(TODAY_OPERATIONAL, computedOpen);
+                var opTodayKey = getOperationalToday();
+                if (!parsed.days[opTodayKey]) {
+                    parsed.days[opTodayKey] = createEmptyDay(opTodayKey, computedOpen);
                 } else {
-                    var tRooms = parsed.days[TODAY_OPERATIONAL].rooms || {};
+                    var tDayObj = parsed.days[opTodayKey];
+                    var tRooms = tDayObj.rooms || {};
                     var sumOpenToday = ROOM_IDS.reduce(function (acc, r) { return acc + (Number(tRooms[r] && tRooms[r].opening) || 0); }, 0);
-                    if (sumOpenToday === 0 && (parsed.days[TODAY_OPERATIONAL].completed || []).length === 0) {
+                    var hasAnyLogOrIn = (tDayObj.stockLogs && tDayObj.stockLogs.length > 0) ||
+                        ROOM_IDS.some(function (r) { return (Number(tRooms[r] && tRooms[r].inbound) || 0) > 0; });
+                    if (!tDayObj.openingManuallySet && sumOpenToday === 0 && (tDayObj.completed || []).length === 0 && !hasAnyLogOrIn) {
                         ROOM_IDS.forEach(function (r) {
-                            if (!parsed.days[TODAY_OPERATIONAL].rooms[r]) parsed.days[TODAY_OPERATIONAL].rooms[r] = { opening: 0, inbound: 0 };
-                            parsed.days[TODAY_OPERATIONAL].rooms[r].opening = computedOpen[r];
+                            if (!tDayObj.rooms[r]) tDayObj.rooms[r] = { opening: 0, inbound: 0 };
+                            tDayObj.rooms[r].opening = computedOpen[r];
                         });
                     }
                 }
@@ -2230,7 +2292,10 @@
             if (!nextDay) return;
             var freshMap = getCarryoverOpenMapForDate(nextKey);
             if (!freshMap) return;
-            var hasOwnMovement = (nextDay.completed && nextDay.completed.length > 0) || (nextDay.stockLogs && nextDay.stockLogs.length > 0);
+            if (nextDay.openingManuallySet) return;
+            var hasOwnMovement = (nextDay.completed && nextDay.completed.length > 0) ||
+                (nextDay.pending && nextDay.pending.length > 0) ||
+                (nextDay.stockLogs && nextDay.stockLogs.length > 0);
             var sumIn = ROOM_IDS.reduce(function (a, r) { return a + (Number(nextDay.rooms && nextDay.rooms[r] && nextDay.rooms[r].inbound) || 0); }, 0);
             if (!hasOwnMovement && sumIn === 0) {
                 ROOM_IDS.forEach(function (r) {
@@ -2367,7 +2432,7 @@
     }
 
     function getOverdueMinutes(schedTime) {
-        if (state.date !== TODAY_OPERATIONAL) return 0;
+        if (state.date !== getOperationalToday()) return 0;
         if (!schedTime || schedTime === "Rutin") return 0;
         var schedMin = parseClockMinutes(schedTime);
         var nowMin = parseClockMinutes(nowHHMM());
@@ -2771,13 +2836,13 @@
         var k4Out = sum.roomStats["4"].outP;
         var otherRoomsOut = sum.roomStats["1"].outP + sum.roomStats["2"].outP + sum.roomStats["5"].outP + sum.roomStats["6"].outP + sum.otherOut;
 
-        var p = (state.date || TODAY_OPERATIONAL).split("-").map(Number);
+        var p = (state.date || getOperationalToday()).split("-").map(Number);
         var dt = new Date(p[0] || 2026, (p[1] || 11) - 1, p[2] || 20);
         var dow = isNaN(dt.getDay()) ? 5 : dt.getDay();
         setText("day-name-pill", DAY_KR[dow] + " · " + DAY_ID[dow]);
         setVal("active-date-input", state.date);
 
-        var isNonToday = state.date !== TODAY_OPERATIONAL;
+        var isNonToday = state.date !== getOperationalToday();
         showEl("date-guard-banner", isNonToday);
         if (isNonToday) {
             setText("date-guard-text", "Mode Arsip (" + state.date + "): Hati-hati saat mengubah data tanggal lampau.");
@@ -3394,14 +3459,22 @@
         ];
 
         var placed = [];
+        var totalFiltered = filteredRows.length;
         var nodes = filteredRows.map(function (rw, idx) {
             var base = getWarehouseGeoCoord(rw.center, idx);
-            var x = base.x, y = Math.max(48, base.y);
-            for (var attempt = 0; attempt < 6; attempt++) {
-                var clash = placed.some(function (prev) { return Math.abs(x - prev.x) < 76 && Math.abs(y - prev.y) < 32; });
+            var x = base.x, y = Math.max(46, base.y);
+            if (totalFiltered > 8) {
+                var cols = 4;
+                var cIdx = idx % cols;
+                var rIdx = Math.floor(idx / cols);
+                x = 58 + cIdx * 96;
+                y = 54 + rIdx * 42;
+            }
+            for (var attempt = 0; attempt < 10; attempt++) {
+                var clash = placed.some(function (prev) { return Math.abs(x - prev.x) < 78 && Math.abs(y - prev.y) < 30; });
                 if (!clash) break;
-                y += 32;
-                if (y > 204) { y = 50 + ((attempt * 19) % 68); x = Math.min(368, x + 54); }
+                y += 30;
+                if (y > 206) { y = 48 + ((attempt * 17) % 72); x = x > 210 ? Math.max(46, x - 64) : Math.min(362, x + 64); }
             }
             placed.push({ x: x, y: y });
             return { row: rw, x: x, y: y };
@@ -3559,6 +3632,8 @@
         setVal("cfg-gemini-key", state.aiDriveConfig.geminiApiKey || "");
         setVal("cfg-gemini-model", state.aiDriveConfig.geminiModel || "gemini-2.5-flash");
         setVal("cfg-gdrive-client", state.aiDriveConfig.googleClientId || "");
+        var epChk = el("cfg-ephemeral-session");
+        if (epChk) epChk.checked = Boolean(state.aiDriveConfig.sessionOnly);
 
         var drvBadge = el("gdrive-status-badge");
         if (drvBadge) {
@@ -3655,6 +3730,10 @@
         renderReportsTab();
         renderMasterTab();
     }
+
+    setInterval(function () {
+        setText("live-clock", nowHHMM());
+    }, 15000);
 
     function collectPeriodDays(period) {
         var target = state.date;
@@ -3850,11 +3929,11 @@
 
         changeDate: changeDate,
         shiftDate: shiftDate,
-        jumpToOperationalToday: function () { changeDate(TODAY_OPERATIONAL); },
+        jumpToOperationalToday: function () { changeDate(getOperationalToday()); },
         goHomeToday: function () {
-            var wasDifferentDate = state.date !== TODAY_OPERATIONAL;
+            var wasDifferentDate = state.date !== getOperationalToday();
             if (wasDifferentDate) {
-                changeDate(TODAY_OPERATIONAL);
+                changeDate(getOperationalToday());
             }
             switchTab("dispatch");
             if (wasDifferentDate) {
@@ -4083,6 +4162,7 @@
 
         saveStockAwalModal: function () {
             var dObj = getDay(state.date);
+            dObj.openingManuallySet = true;
             ROOM_IDS.forEach(function (r) {
                 var inp = el("modal-stock-awal-" + r);
                 dObj.rooms[r].opening = Math.max(0, Number(inp ? inp.value : 0) || 0);
@@ -4173,13 +4253,19 @@
         bulkShiftPendingTimes: function (deltaMin) {
             var dObj = getDay(state.date);
             if (dObj.pending.length === 0) { toast("Tidak ada antrean truk untuk digeser."); return; }
+            var wrappedDay = false;
             dObj.pending.forEach(function (it) {
                 var mins = parseClockMinutes(it.schedTime);
                 if (mins === null) mins = parseClockMinutes(nowHHMM()) || 720;
-                mins = (mins + deltaMin + 1440) % 1440;
+                var rawNext = mins + deltaMin;
+                if (rawNext < 0 || rawNext >= 1440) wrappedDay = true;
+                mins = (rawNext + 1440) % 1440;
                 it.schedTime = String(Math.floor(mins / 60)).padStart(2, "0") + ":" + String(mins % 60).padStart(2, "0");
                 if (deltaMin > 0) it.isDelayed = true;
             });
+            if (wrappedDay) {
+                toast("Perhatian: Ada jadwal yang melewati pergantian hari (00:00).");
+            }
             saveState(); renderAll();
             toast("Seluruh jadwal antrean digeser " + (deltaMin > 0 ? "+" : "") + deltaMin + " menit.");
         },
@@ -4245,11 +4331,42 @@
             saveState(); renderAll();
         },
 
+        toggleSessionOnlyCreds: function (sessionOnly) {
+            state.aiDriveConfig.sessionOnly = Boolean(sessionOnly);
+            if (!sessionOnly) saveState();
+            else {
+                try {
+                    var raw = window.localStorage && window.localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        var parsed = JSON.parse(raw);
+                        if (parsed && parsed.aiDriveConfig) {
+                            parsed.aiDriveConfig.geminiApiKey = "";
+                            parsed.aiDriveConfig.googleAccessToken = "";
+                            parsed.aiDriveConfig.sessionOnly = true;
+                            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+                        }
+                    }
+                } catch (e) {}
+            }
+            toast(sessionOnly ? "Mode sesi aktif: API key & token tidak disimpan ke localStorage." : "Mode penyimpanan lokal aktif.");
+        },
+
         saveAiDriveConfig: function () {
             if (el("cfg-gemini-key")) state.aiDriveConfig.geminiApiKey = (el("cfg-gemini-key").value || "").trim();
             if (el("cfg-gemini-model")) state.aiDriveConfig.geminiModel = (el("cfg-gemini-model").value || "gemini-2.5-flash").trim();
             if (el("cfg-gdrive-client")) state.aiDriveConfig.googleClientId = (el("cfg-gdrive-client").value || "").trim();
-            saveState(); renderAdvisor(); renderMasterTab();
+            if (state.aiDriveConfig.sessionOnly) {
+                var savedKey = state.aiDriveConfig.geminiApiKey;
+                var savedTok = state.aiDriveConfig.googleAccessToken;
+                state.aiDriveConfig.geminiApiKey = "";
+                state.aiDriveConfig.googleAccessToken = "";
+                saveState();
+                state.aiDriveConfig.geminiApiKey = savedKey;
+                state.aiDriveConfig.googleAccessToken = savedTok;
+            } else {
+                saveState();
+            }
+            renderAdvisor(); renderMasterTab();
         },
 
         runAiAgentAnalysis: function () {
@@ -4738,6 +4855,12 @@
             };
             if (splitArr) completedRec.roomSplits = splitArr;
             dObj.completed.unshift(completedRec);
+            dObj.completed.sort(function (a, b) {
+                var ta = parseClockMinutes(a.actualTime || a.schedTime);
+                var tb = parseClockMinutes(b.actualTime || b.schedTime);
+                if (ta !== null && tb !== null && ta !== tb) return tb - ta;
+                return 0;
+            });
 
             autoSyncColdOutFromCompleted(dObj);
             if (cmdInp) cmdInp.value = "";
@@ -4859,12 +4982,16 @@
             showEl("add-split-room-box", false);
             var btnA = el("btn-add-split-toggle");
             if (btnA) btnA.textContent = "+ Pecah Kamar (Darurat)";
+            if (el("add-center")) el("add-center").value = "";
+            if (el("add-plate")) el("add-plate").value = "";
+            if (el("add-driver")) el("add-driver").value = "";
+            if (el("add-phone")) el("add-phone").value = "";
             setHTML("add-fleet-preset", '<option value="">-- Ketik Manual / Pilih Armada --</option>' +
                 state.fleetMaster.map(function (fl) {
                     return '<option value="' + esc(fl.id) + '">' + esc(fl.plate + " · " + fl.driver + " (" + fl.center + ")") + '</option>';
                 }).join(""));
             setText("add-opt-other", getOtherLabel());
-            setVal("add-pallets", 18);
+            if (el("add-pallets")) el("add-pallets").value = 18;
             showEl("add-rit-modal", true);
         },
 
@@ -5070,6 +5197,11 @@
                 var toRm = el("kor-tr-to") ? el("kor-tr-to").value : "4";
                 var tQty = Math.max(1, Number(el("kor-tr-qty") ? el("kor-tr-qty").value : 1) || 1);
                 if (fromRm === toRm) { toast("Kamar asal dan kamar tujuan harus berbeda."); return; }
+                var sumTr = calcSummary(dObj);
+                var availFrom = sumTr.roomStats[fromRm] ? sumTr.roomStats[fromRm].closeP : 0;
+                if (tQty > availFrom) {
+                    toast("Peringatan: Stok Kamar " + fromRm + " hanya " + availFrom + " P (lebih kecil dari " + tQty + " P).");
+                }
                 var ts = Date.now();
                 dObj.stockLogs.unshift({
                     id: "lg-" + ts + "-to", time: nowHHMM(), kind: "koreksi", room: toRm, delta: tQty,
@@ -5148,6 +5280,15 @@
 
         deleteStockLog: function (id) {
             var dObj = getDay(state.date);
+            var targetLog = (dObj.stockLogs || []).find(function (lg) { return lg.id === id; });
+            if (targetLog && targetLog.kind === "ibgo" && targetLog.inboundByRoom) {
+                ROOM_IDS.forEach(function (r) {
+                    var deltaIn = Number(targetLog.inboundByRoom[r]) || 0;
+                    if (deltaIn !== 0 && dObj.rooms[r]) {
+                        dObj.rooms[r].inbound = Math.max(0, (Number(dObj.rooms[r].inbound) || 0) - deltaIn);
+                    }
+                });
+            }
             dObj.stockLogs = (dObj.stockLogs || []).filter(function (lg) { return lg.id !== id; });
             saveState(); renderAll();
             toast("Riwayat mutasi dihapus.");
@@ -5209,13 +5350,19 @@
 
         saveManualInbound: function () {
             var dObj = getDay(state.date);
-            var addedTotal = 0, parts = [];
+            var addedTotal = 0, parts = [], addedByRoom = {};
             ROOM_IDS.forEach(function (r) {
                 var inp = el("in-val-" + r);
                 var v = Math.max(0, Number(inp ? inp.value : 0) || 0);
                 if (v > 0) {
-                    if (state.stokLangsungMode) dObj.rooms[r].inbound = (Number(dObj.rooms[r].inbound) || 0) + v;
-                    else dObj.rooms[r].inbound = v;
+                    var prevIn = Number(dObj.rooms[r].inbound) || 0;
+                    if (state.stokLangsungMode) {
+                        dObj.rooms[r].inbound = prevIn + v;
+                        addedByRoom[r] = v;
+                    } else {
+                        dObj.rooms[r].inbound = v;
+                        addedByRoom[r] = v - prevIn;
+                    }
                     addedTotal += v;
                     parts.push("K" + r + " " + v + " P");
                 }
@@ -5226,6 +5373,7 @@
             var rem = el("in-remark-note") ? el("in-remark-note").value.trim() : "";
             dObj.stockLogs.unshift({
                 id: "lg-" + Date.now(), time: nowHHMM(), kind: "ibgo", room: "1-6", delta: 0,
+                inboundByRoom: addedByRoom,
                 label: "입고 [" + shiftLbl + "] " + addedTotal + " P (" + parts.join(", ") + ")" + (rem ? " · " + rem : "")
             });
             if (el("in-remark-note")) el("in-remark-note").value = "";
@@ -5236,7 +5384,13 @@
         editRoomField: function (r, field, val) {
             var dObj = getDay(state.date);
             dObj.rooms[r][field] = Math.max(0, Number(val) || 0);
-            saveState(); renderHeaderAndWidgets(); renderAdvisor(); renderQuickConsole(); renderMatrixTab(); renderReportsTab();
+            saveState();
+            renderHeaderAndWidgets();
+            renderAdvisor();
+            renderQuickConsole();
+            refreshInboundPreview();
+            renderReportsTab();
+            if (window.WMS && window.WMS.renderEnterpriseAiTower) window.WMS.renderEnterpriseAiTower();
         },
 
         setReportType: function (rtype) { reportTypeMode = rtype || "combined"; renderReportsTab(); },
@@ -5263,7 +5417,10 @@
                 doneRit: dObj.completed.length, totalRit: dObj.completed.length + dObj.pending.length, snapshot: snap
             };
             var idx = state.archives.findIndex(function (a) { return a.date === state.date; });
-            if (idx !== -1) state.archives[idx] = entry;
+            if (idx !== -1) {
+                if (typeof window.confirm === "function" && !window.confirm("Arsip untuk " + state.date + " sudah ada. Timpa arsip lama?")) return;
+                state.archives[idx] = entry;
+            }
             else state.archives.unshift(entry);
             saveState(); renderAll();
             toast("Tutup Hari " + state.date + " terverifikasi (입고 + 출고 tersimpan).");
@@ -5304,6 +5461,7 @@
         },
 
         deleteArchive: function (id) {
+            if (typeof window.confirm === "function" && !window.confirm("Hapus arsip laporan ini?")) return;
             state.archives = state.archives.filter(function (a) { return a.id !== id; });
             saveState(); renderReportsTab();
         },
@@ -5335,7 +5493,7 @@
                 var sum = calcSummary(dayItem);
                 var v = dayItem.verification || {};
                 var sh = dayItem.shiftSheet || createDefaultShiftSheet();
-                var p = (dayItem.date || TODAY_OPERATIONAL).split("-").map(Number);
+                var p = (dayItem.date || getOperationalToday()).split("-").map(Number);
                 var dtObj = new Date(p[0] || 2026, (p[1] || 11) - 1, p[2] || 20);
                 var dowIdx = isNaN(dtObj.getDay()) ? 5 : dtObj.getDay();
                 var dayLabelKr = DAY_KR[dowIdx] + "요일";
@@ -5453,13 +5611,23 @@
         exportCSV: function () {
             var perSel = el("export-period");
             var daysList = collectPeriodDays(perSel ? perSel.value : "daily");
+            var csvCell = function (val) {
+                var s = String(val == null ? "" : val);
+                if (/^[=+\-@]/.test(s)) s = "'" + s;
+                if (/[",\n\r]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+                return s;
+            };
             var lines = ["Tanggal,Jenis,Jam,Center,Plat,Supir,Telepon,Kamar,Palet,SKU,Tipe"];
             daysList.forEach(function (dItem) {
                 dItem.completed.forEach(function (c) {
-                    lines.push([dItem.date, "CULGO", c.actualTime || c.schedTime, c.center, c.plate, c.driver, c.phone || "-", formatItemRoomSummary(c), getTotalItemPallets(c), c.sku || "쿠팡 350", formatGradeLabel(c.grade)].join(","));
+                    lines.push([
+                        dItem.date, "CULGO", c.actualTime || c.schedTime, c.center,
+                        c.plate, c.driver, c.phone || "-", formatItemRoomSummary(c),
+                        getTotalItemPallets(c), c.sku || "쿠팡 350", formatGradeLabel(c.grade)
+                    ].map(csvCell).join(","));
                 });
             });
-            downloadFile("IceFoodEnVine_" + reportTypeMode.toUpperCase() + "_" + state.date + ".csv", lines.join("\n"), "text/csv;charset=utf-8");
+            downloadFile("IceFoodEnVine_" + reportTypeMode.toUpperCase() + "_" + state.date + ".csv", lines.join("\r\n"), "text/csv;charset=utf-8");
             toast("File CSV diunduh.");
         },
 
@@ -5505,6 +5673,7 @@
         },
 
         restoreBaseline19: function () {
+            if (typeof window.confirm === "function" && !window.confirm("Reset seluruh data ke baseline operasional?")) return;
             try { window.localStorage.removeItem(STORAGE_KEY); } catch (e) {}
             state = createBaselineState();
             quickRoom = "3"; quickPallets = 18; quickSplitMode = false; quickPendingId = "";
@@ -5550,6 +5719,17 @@
         }
     };
 
+    document.addEventListener("input", function (ev) {
+        var inp = ev.target;
+        if (!inp || inp.tagName !== "INPUT" || inp.type !== "number") return;
+        if (inp.hasAttribute("min") && Number(inp.getAttribute("min")) >= 0 && inp.value !== "") {
+            var numVal = Number(inp.value);
+            if (!Number.isFinite(numVal) || numVal < 0) {
+                inp.value = 0;
+            }
+        }
+    }, true);
+
     /* 120Hz ProMotion Specular Touch Ripple on Buttons & Interactive Cards */
     document.addEventListener("pointerdown", function (ev) {
         var target = ev.target && ev.target.closest ? ev.target.closest("button, a, .kpi-uniform, .lg-card, .lg-card-tint, .lg-dark-card") : null;
@@ -5567,6 +5747,99 @@
             if (rip && rip.parentNode) rip.parentNode.removeChild(rip);
         }, 460);
     }, { passive: true });
+
+
+    /* PWA Install Prompt, Inline Blob Manifest Fallback & Fullscreen Controller */
+    var deferredPwaPrompt = null;
+    (function setupPwaAndFullscreen() {
+        try {
+            var isStandalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+                (window.matchMedia && window.matchMedia("(display-mode: fullscreen)").matches) ||
+                Boolean(window.navigator.standalone);
+            var lbl = el("pwa-install-label");
+            if (isStandalone && lbl) {
+                lbl.textContent = "Terinstal";
+            }
+            if (window.location.protocol === "file:" || window.location.protocol === "content:") {
+                var blobManifest = new Blob([JSON.stringify({
+                    name: "(주) 아이스푸드앤바인 · Cold-Storage WMS",
+                    short_name: "Cold WMS",
+                    display: "fullscreen",
+                    start_url: ".",
+                    background_color: "#0f172a",
+                    theme_color: "#0f172a"
+                })], { type: "application/manifest+json" });
+                var mLink = el("pwa-manifest-link");
+                if (mLink) mLink.href = URL.createObjectURL(blobManifest);
+            }
+            if ("serviceWorker" in navigator && (window.location.protocol === "https:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+                fetch("./sw.js", { method: "HEAD" }).then(function (resp) {
+                    if (resp && resp.ok) {
+                        navigator.serviceWorker.register("./sw.js").catch(function () {});
+                    }
+                }).catch(function () {});
+            }
+        } catch (e) {}
+    })();
+
+    window.addEventListener("beforeinstallprompt", function (e) {
+        e.preventDefault();
+        deferredPwaPrompt = e;
+        var lbl = el("pwa-install-label");
+        if (lbl) lbl.textContent = "Install APK";
+    });
+
+    window.addEventListener("appinstalled", function () {
+        deferredPwaPrompt = null;
+        var lbl = el("pwa-install-label");
+        if (lbl) lbl.textContent = "Terinstal";
+        toast("Cold WMS berhasil diinstal ke layar utama!");
+    });
+
+    window.WMS.installPwaApp = function () {
+        if (deferredPwaPrompt && typeof deferredPwaPrompt.prompt === "function") {
+            deferredPwaPrompt.prompt();
+            deferredPwaPrompt.userChoice.then(function (choice) {
+                if (choice && choice.outcome === "accepted") {
+                    toast("Menginstal Cold WMS ke perangkat...");
+                }
+                deferredPwaPrompt = null;
+            }).catch(function () {});
+            return;
+        }
+        var isStandalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || Boolean(window.navigator.standalone);
+        if (isStandalone) {
+            toast("Aplikasi sudah berjalan dalam mode layar penuh terinstal.");
+            return;
+        }
+        if (window.location.protocol === "file:" || window.location.protocol === "content:") {
+            toast("Buka tautan GitHub Pages di Chrome lalu ketuk 'Tambahkan ke Layar Utama' untuk menginstal.");
+        } else {
+            toast("Ketuk menu browser (⋮) → 'Tambahkan ke Layar Utama' / 'Instal Aplikasi'.");
+        }
+    };
+
+    window.WMS.toggleFullscreenMode = function () {
+        var docEl = document.documentElement;
+        var isFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+        if (!isFs) {
+            var reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
+            if (reqFs) {
+                reqFs.call(docEl).then(function () {
+                    toast("Mode layar penuh aktif.");
+                }).catch(function () {
+                    toast("Gunakan 'Install App' untuk membuka penuh tanpa bar browser.");
+                });
+            } else {
+                toast("Gunakan 'Install App' untuk membuka penuh tanpa bar browser.");
+            }
+        } else {
+            var exitFs = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+            if (exitFs) {
+                exitFs.call(document).catch(function () {});
+            }
+        }
+    };
 
     renderAll();
 })();
